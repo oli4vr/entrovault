@@ -198,6 +198,7 @@ int main(int argc, char **argv)
        }
      break;
  }
-
+ fflush(stdout);
+ fprintf(stderr,"\n");
  return 0;
 }
