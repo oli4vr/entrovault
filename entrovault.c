@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     case 'v':
            argc--;
            argv++;
-           if (argc>0) {snprintf(filepath,256,"%s/%s",basepath,argv[0]);}
+           if (argc>0) {snprintf(filepath,256,"%s/.%s.entropy",basepath,argv[0]);}
            else {badsyntax=1;}
            break;
     case 'p':
