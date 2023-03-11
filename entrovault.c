@@ -51,7 +51,7 @@ int main(int argc, char **argv)
  unsigned char rounds=2;
  long int offset=0,rr=0;
  snprintf(basepath,256,"%s/.entropy", getpwuid(getuid())->pw_dir);
- snprintf(filepath,256,"%s/.default.entropy",basepath);
+ snprintf(filepath,256,"%s/.default.entropy",basepath); 
 
  //Option handling
  argc--;
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-f filename] [-\% rounds] keystring\n\n");
+    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-\% rounds] keystring\n\n");
     fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
     fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -\%\t\tEncryption rounds\n\n");
     return -1;
