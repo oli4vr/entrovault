@@ -24,7 +24,7 @@ Options
  -%             Encryption rounds
  </pre>
 
- <h3>Build & Install<h3>
+ <h3>Build & Install</h3>
  <pre>git clone https://github.com/oli4vr/entrovault.git
  cd entrovault
  make
