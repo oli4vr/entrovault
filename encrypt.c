@@ -1,9 +1,7 @@
-/* encrypt.h
+/* encrypt.c
  *
- * Basic encryption 
+ * Custom encryption 
  * by Olivier Van Rompuy
- *
- * Custom encryption algorithm
  *
  * Per iteration/round the following is done to the data :
  * - 1st round only : Starting InvertXOR with 8192bit key
