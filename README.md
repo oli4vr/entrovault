@@ -24,11 +24,48 @@ Options
  -%             Encryption rounds
  </pre>
 
- <h3>Build & Install</h3>
- <pre>git clone https://github.com/oli4vr/entrovault.git
- cd entrovault
- make
- make install
- </pre>
- <p>* Make sure ~/bin is in your $PATH</p>
+<h3>Explain by example :</h3>
+<p><b>Store a password in the vault and retrieve it</b><br/>
+You are always required to enter a vault password. This password can be unique per entry, but does not have to be.
+This is purely up to the user and the use case. When you append a new entry you are required to confirm the password a second time.
+<br/>The -q option allows you to enter the payload via a password style input prompt.
+</p>
+<pre>$ entrovault -q -a MySecretPassword
+Enter vault password for MySecretPassword - 1st : 
+Enter vault password for MySecretPassword - 2nd : 
+Payload 1st : 
+Payload 2nd :
+</pre>
+<p>Retrieve your password</p>
+<pre>$ entrovault MySecretPassword
+Enter vault password for MySecretPassword :
+PASSW0RD
+</pre>
+<p>Example interactive scripting use case :<br/>
+The point here is that you only need to remember the vault password</p>
+<pre>some_application -username=myuser -password=$(entrovault MySecretPassword) ...do some stuff</pre>
+
+<p>Replace entry</p>
+<pre>$ entrovault -q -r MySecretPassword
+Enter vault password for MySecretPassword :
+Payload 1st :
+Payload 2nd :
+</pre>
+
+<p>Erase entry</p>
+<pre>$ entrovault -e MySecretPassword
+Enter vault password for MySecretPassword :
+Payload 1st :
+Payload 2nd :
+</pre>
+
+<p>By default stdin is used as the source for the payload/content unless -q is provided</p>
+
+<h3>Build & Install</h3>
+<pre>$ git clone https://github.com/oli4vr/entrovault.git
+$ cd entrovault
+$ make
+$ make install
+</pre>
+<p>* Make sure ~/bin is in your $PATH</p>
 
