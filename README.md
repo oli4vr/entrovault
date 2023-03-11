@@ -1,7 +1,7 @@
 # Entropy Vault command line tool
-<p>Secure storage of sensitive strings like passwords for the command line.<p>
+<p>Target use : Securely store and retrieve sensitive strings like passwords for command line use.<p>
 
-<p>Entropy vaults are cryptographically obscured files intended to store passwords and other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash. To retrieve it theprogram must decript every possible entry per x nr of bytes with the provided keys.</p>
+<p>Entropy Vaults are cryptographically obscured files intended to store passwords and other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash. To retrieve it theprogram must decript every possible entry per x nr of bytes with the provided keys.</p>
 
 <p>To complicate things a random amount of random data blocks are added before and after each entry and unused data in a payload is also randomized to avoid predictable data blocks.</p>
 
