@@ -48,10 +48,11 @@ int buildkey(unsigned char * keystring) {
  return 0;
 }
 
+/*
 void print_key() {
  int n=0,m=0,ssize;
  unsigned char * kp=key;
- fprintf(stderr,"Generated KEY =\n",*kp);
+ fprintf(stderr,"Generated KEY = %s\n",*kp);
  for(;n<1024;n++) {
   if ((n&31)==0 & n!=0) fprintf(stderr,"\n");
   fprintf(stderr,"%02x ",*kp);
@@ -68,7 +69,7 @@ void print_key() {
   }
   fprintf(stderr,"\n");
  }
-}
+}*/
 
 unsigned char tt_findchar(unsigned char input, int *table) {
  unsigned char found=1;

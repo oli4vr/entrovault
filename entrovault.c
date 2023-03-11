@@ -111,9 +111,9 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-\% rounds] keystring\n\n");
+    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n\n");
     fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
-    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -\%\t\tEncryption rounds\n\n");
+    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n\n");
     return -1;
  }
 
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
       offset=entropy_search(buffer,keystring,password,filepath,rounds);
       if (offset>0) {
       strncpy(payload,buffer,PAYLOAD_SIZE);
-      payload[PAYLOAD_SIZE+1]=0;
+      payload[PAYLOAD_SIZE]=0;
       fwrite(payload,1,strnlen(payload,PAYLOAD_SIZE),stdout);
       }
      break;
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
        offset=entropy_search(buffer,keystring,password,filepath,rounds);
        if (offset>0) {
         strncpy(payload,buffer,PAYLOAD_SIZE);
-        payload[PAYLOAD_SIZE+1]=0;
+        payload[PAYLOAD_SIZE]=0;
 
        if (imode==1) {
         strncpy(payload,(unsigned char*)getpass("Payload 1st : "),80);
@@ -188,7 +188,7 @@ int main(int argc, char **argv)
        offset=entropy_search(buffer,keystring,password,filepath,rounds);
        if (offset>0) {
         strncpy(payload,buffer,PAYLOAD_SIZE);
-        payload[PAYLOAD_SIZE+1]=0;
+        payload[PAYLOAD_SIZE]=0;
         wipe_buffer(buffer);
         buffer[0]=0;
         entropy_erase(buffer,keystring,password,filepath,rounds,offset);
