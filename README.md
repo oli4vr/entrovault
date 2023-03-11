@@ -5,7 +5,7 @@
 
 <p>To complicate things a random amount of random data blocks are added before and after each entry and unused data in a payload is also randomized to avoid predictable data blocks.</p>
 
-<p><u><b>"Entropy" on wikipedia</b></u></p>
+<p><u><b>"Entropy" on wikipedia :</b></u></p>
 <blockquote>"Entropy is a scientific concept, as well as a measurable physical property, that is most commonly associated with a state of disorder, randomness, or uncertainty."</blockquote>
 
 <h3>Command syntax</h3>
