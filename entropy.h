@@ -16,8 +16,8 @@
  * 
  * */
 
-#define PAYLOAD_SIZE 256
-#define BUFFER_SIZE 320
+#define PAYLOAD_SIZE 1024
+#define BUFFER_SIZE 1088
 
 #define RNDBUFF 65536
 

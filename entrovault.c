@@ -80,6 +80,12 @@ int main(int argc, char **argv)
            if (argc>0) {snprintf(filepath,256,"%s/%s",basepath,argv[0]);}
            else {badsyntax=1;}
            break;
+    case 'p':
+           argc--;
+           argv++;
+           if (argc>0) {snprintf(password,256,"%s/%s",basepath,argv[0]);}
+           else {badsyntax=1;}
+           break;
     case '%':
            argc--;
            argv++;
@@ -105,8 +111,8 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-f filename] [-\% rounds] keystring\n\n");
-    fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n");
+    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-f filename] [-\% rounds] keystring\n\n");
+    fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
     fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -\%\t\tEncryption rounds\n\n");
     return -1;
  }
@@ -115,17 +121,19 @@ int main(int argc, char **argv)
  mkdir(basepath,S_IRWXU);
 
  //Enter the vault password
- if (mode==1) {
-  snprintf(prompt,256,"Enter vault password for %s - 1st : ",keystring);
-  strncpy(password,(unsigned char*)getpass(prompt),80);
-  snprintf(prompt,256,"Enter vault password for %s - 2nd : ",keystring);
-  strncpy(check   ,(unsigned char*)getpass(prompt),80);
-  if (strncmp(password,check,256)!=0) {
+ if (*password==0) {
+  if (mode==1) {
+   snprintf(prompt,256,"Enter vault password for %s - 1st : ",keystring);
+   strncpy(password,(unsigned char*)getpass(prompt),80);
+   snprintf(prompt,256,"Enter vault password for %s - 2nd : ",keystring);
+   strncpy(check   ,(unsigned char*)getpass(prompt),80);
+   if (strncmp(password,check,256)!=0) {
      fprintf(stderr,"-> Error : Password entry is not identical!\n");
+   }
+  } else {
+   snprintf(prompt,256,"Enter vault password for %s :",keystring);
+   strncpy(password,(unsigned char*)getpass(prompt),80);
   }
- } else {
-  snprintf(prompt,256,"Enter vault password for %s :",keystring);
-  strncpy(password,(unsigned char*)getpass(prompt),80);
  }
 
  switch(mode) {

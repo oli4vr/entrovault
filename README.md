@@ -5,20 +5,23 @@
 
 <p>For obscuring purposes a random amount of random byte blocks are added before and after each entry. And unused data in a payload is also randomized to avoid predictable data blocks.</p>
 
+<p>There is also no index or any method to list or know what entries are present in the file. The idea is that person A could store an entry after person B and be completely unaware that person A has any data in the vault and vise versa.</p>
+
 <p><u><b>"Entropy" on wikipedia :</b></u></p>
 <blockquote>"Entropy is a scientific concept, as well as a measurable physical property, that is most commonly associated with a state of disorder, randomness, or uncertainty."</blockquote>
 
 <h3>Command syntax</h3>
-<pre>
+<pre>$ entrovault
 entrovault -> Entropy vault
  by Olivier Van Rompuy
 
-Syntax: entrovault [-a | -r | -e] [-q] [-f filename] [-% rounds] keystring
+Syntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-f filename] [-% rounds] keystring
 
 Options
  -a             Append entry
  -r             Replace entry
  -e             Erase entry
+ -p             Vault password
  -q             Password type payload entry
  -v             Vault name
  -%             Encryption rounds
@@ -60,6 +63,10 @@ Payload 2nd :
 </pre>
 
 <p>By default stdin is used as the source for the payload/content unless -q is provided</p>
+<p>You can use mixed complexities of encryption with the -% parameter you can choose a customer nr of encryption rounds.
+Do note that encryption is done in 2 stages, so the current 3 round default actually results in 6 encryption rounds.
+You can go up to 255, but beware that as the vault file grows it will require exponentially more cpu power to retrieve entries. 2-8 rounds is quite secure, anything above is for experimentation only.
+<p>
 
 <h3>Build & Install</h3>
 <pre>$ git clone https://github.com/oli4vr/entrovault.git
