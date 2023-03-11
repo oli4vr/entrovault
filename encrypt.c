@@ -7,10 +7,10 @@
  *
  * Per iteration/round the following is done to the data :
  * - 1st round only : Starting InvertXOR with 8192bit key
- * - Byte substition
- * - Bitshift obscuring offset A (per 64bit words)
+ * - Byte substitution (different translation tables per round)
+ * - Leftway bitwise rotation *A (per 64bit words)
  * - InvertXOR with 8192bit key
- * - Inverse Bitshift obscuring offset B (per 64bit words)
+ * - Rightway bitwise rotation *B (per 64bit words)
  *
  */
 
