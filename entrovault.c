@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     case 'p':
            argc--;
            argv++;
-           if (argc>0) {snprintf(password,256,"%s/%s",basepath,argv[0]);}
+           if (argc>0) {snprintf(password,256,"%s",argv[0]);}
            else {badsyntax=1;}
            break;
     case '%':
