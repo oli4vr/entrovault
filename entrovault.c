@@ -31,6 +31,7 @@
 #include <limits.h>
 #include <assert.h>
 #include <time.h>
+#include <dirent.h>
 
 #include "entropy.h"
 
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
  unsigned char badsyntax=0;
  unsigned char mode=0;
  unsigned char imode=0;
- unsigned char *opt, * cmd=*argv;
+ unsigned char *opt, * cmd=*argv, *c;
  unsigned char basepath[256]={0};
  unsigned char filepath[512]={0};
  unsigned char keystring[256]={0};
@@ -50,6 +51,9 @@ int main(int argc, char **argv)
  unsigned char buffer[BUFFER_SIZE]={0};
  unsigned char rounds=2;
  long int offset=0,rr=0;
+ int len;
+ DIR *dp;
+ struct dirent *entry;
  snprintf(basepath,256,"%s/.entropy", getpwuid(getuid())->pw_dir);
  snprintf(filepath,256,"%s/.default.entropy",basepath); 
 
@@ -102,8 +106,13 @@ int main(int argc, char **argv)
  }
 
  if (argc>0) {
+  opt=*argv;
+  if (opt[0]=='-' && opt[1]=='l') {
+    mode=9;
+  } else {
     strncpy(keystring,argv[0],256);
     keystring[255]=0;
+  }
  } else {
     badsyntax=1;
  }
@@ -111,9 +120,10 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n\n");
+    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
+    fprintf(stderr,"        entrovault -l\n\n");
     fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
-    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n\n");
+    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n -l\t\tList vaults\n\n");
     return -1;
  }
 
@@ -121,7 +131,7 @@ int main(int argc, char **argv)
  mkdir(basepath,S_IRWXU);
 
  //Enter the vault password
- if (*password==0) {
+ if (*password==0 && mode<8) {
   if (mode==1) {
    snprintf(prompt,256,"Enter vault password for %s - 1st : ",keystring);
    strncpy(password,(unsigned char*)getpass(prompt),80);
@@ -196,6 +206,25 @@ int main(int argc, char **argv)
         fprintf(stderr," Error : Keystring entry not found!");
         return -5;
        }
+     break;
+    case 9:
+       dp=opendir(basepath);
+       if (dp==NULL) {
+              return -6;
+       }
+       while (entry=readdir(dp)) {
+              strncpy(check,entry->d_name,64);
+              len=strnlen(check,64);
+              if (len>9 && *check=='.') {
+                     c=check+len-8;
+                     if (strncmp(c,".entropy",8)==0) {
+                      *c=0;
+                      c=check+1;
+                      puts(c);
+                     }
+              }
+       }
+       closedir(dp);
      break;
  }
  fflush(stdout);
