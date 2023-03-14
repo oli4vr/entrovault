@@ -48,29 +48,6 @@ int buildkey(unsigned char * keystring) {
  return 0;
 }
 
-/*
-void print_key() {
- int n=0,m=0,ssize;
- unsigned char * kp=key;
- fprintf(stderr,"Generated KEY = %s\n",*kp);
- for(;n<1024;n++) {
-  if ((n&31)==0 & n!=0) fprintf(stderr,"\n");
-  fprintf(stderr,"%02x ",*kp);
-  kp++;
- }
- fprintf(stderr,"\nTranslation Tables =\n");
- for(n=0;n<256;n++) {
-  kp=ttable[n];
-  fprintf(stderr,"Table ID = %02x\n",n);
-  for(m=0;m<256;m++) {
-  if ((m&31)==0 & m!=0) fprintf(stderr,"\n");
-   fprintf(stderr,"%02x ",*kp);
-   kp++;
-  }
-  fprintf(stderr,"\n");
- }
-}*/
-
 unsigned char tt_findchar(unsigned char input, int *table) {
  unsigned char found=1;
  unsigned char curr;

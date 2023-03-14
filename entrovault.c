@@ -7,10 +7,7 @@
  * 
  * Entropy vaults are cryptographically obscured files intended to store passwords and
  * other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash.
- * To retrieve it theprogram must decript every possible entry per x nr of bytes with the provided keys.
- * 
- * To complicate things a random amount of random data blocks are added before and after each entry and
- * unused data in a payload is also randomized to avoid predictable data blocks.
+ * To retrieve it the program must decrypt every possible entry in the "entropy vault file" to retrieve it.
  * 
  * Meaning of entropy from Wikipedia =
  * "Entropy is a scientific concept, as well as a measurable physical property,
@@ -35,11 +32,14 @@
 
 #include "entropy.h"
 
+#define DEFAULT_ROUNDS 3
+
 int main(int argc, char **argv)
 {
  unsigned char badsyntax=0;
  unsigned char mode=0;
  unsigned char imode=0;
+ unsigned char syscmd=0;
  unsigned char *opt, * cmd=*argv, *c;
  unsigned char basepath[256]={0};
  unsigned char filepath[512]={0};
@@ -49,9 +49,9 @@ int main(int argc, char **argv)
  unsigned char payload[PAYLOAD_SIZE+1]={0};
  unsigned char check[PAYLOAD_SIZE+1]={0};
  unsigned char buffer[BUFFER_SIZE]={0};
- unsigned char rounds=2;
+ unsigned char rounds=DEFAULT_ROUNDS;
  long int offset=0,rr=0;
- int len;
+ int len,rc;
  DIR *dp;
  struct dirent *entry;
  snprintf(basepath,256,"%s/.entropy", getpwuid(getuid())->pw_dir);
@@ -66,6 +66,9 @@ int main(int argc, char **argv)
   if (*opt!='-') {badsyntax=1; argc=0;}
   else {
    switch(opt[1]) {
+    case 'c':
+           syscmd=1;
+           break;
     case 'q':
            imode=1;
            break;
@@ -120,10 +123,15 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\nSyntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
-    fprintf(stderr,"        entrovault -l\n\n");
+    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\n");
+    fprintf(stderr,"Search Entry  : entrovault [-c] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
+    fprintf(stderr,"Append Entry  : entrovault -a [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
+    fprintf(stderr,"Replace Entry : entrovault -r [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
+    fprintf(stderr,"Erase Entry   : entrovault -e [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
+    fprintf(stderr,"List Vaults   : entrovault -l\n\n");
     fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
-    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n -l\t\tList vaults\n\n");
+    fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n -l\t\tList vaults\n");
+    fprintf(stderr," -c\t\tExecute content as system commands\n\n");
     return -1;
  }
 
@@ -149,10 +157,14 @@ int main(int argc, char **argv)
  switch(mode) {
     case 0:   //Search entry and output content
       offset=entropy_search(buffer,keystring,password,filepath,rounds);
-      if (offset>0) {
+      if (offset>-1) {
       strncpy(payload,buffer,PAYLOAD_SIZE);
       payload[PAYLOAD_SIZE]=0;
-      fwrite(payload,1,strnlen(payload,PAYLOAD_SIZE),stdout);
+      if (syscmd) {
+       rc=system(payload);
+      } else {
+       fwrite(payload,1,strnlen(payload,PAYLOAD_SIZE),stdout);
+      }
       }
      break;
     case 1:   //Append entry
@@ -172,7 +184,7 @@ int main(int argc, char **argv)
      break;
     case 2:   //Replace entry
        offset=entropy_search(buffer,keystring,password,filepath,rounds);
-       if (offset>0) {
+       if (offset>-1) {
         strncpy(payload,buffer,PAYLOAD_SIZE);
         payload[PAYLOAD_SIZE]=0;
 
@@ -196,7 +208,7 @@ int main(int argc, char **argv)
      break;
     case 3:  //Erase entry
        offset=entropy_search(buffer,keystring,password,filepath,rounds);
-       if (offset>0) {
+       if (offset>-1) {
         strncpy(payload,buffer,PAYLOAD_SIZE);
         payload[PAYLOAD_SIZE]=0;
         wipe_buffer(buffer);

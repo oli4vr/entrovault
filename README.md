@@ -1,9 +1,7 @@
 # Entropy Vault command line tool
 <p>Target use : Securely store and retrieve sensitive strings like passwords for command line use.<p>
 
-<p>Entropy Vaults are cryptographically obscured files intended to store passwords and other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash. To retrieve it the program must decript every possible entry per x nr of bytes with the provided keys.</p>
-
-<p>For obscuring purposes a random amount of random byte blocks are added before and after each entry. And unused data in a payload is also randomized to avoid predictable data blocks.</p>
+<p>Entropy Vaults are cryptographically obscured files intended to store passwords and other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash. To retrieve it the program must decrypt every possible entry in the "entropy vault file" to retrieve it.</p>
 
 <p>There is also no index or any method to list or know what entries are present in the file. The idea is that person A could store an entry after person B and be completely unaware that person A has any data in the vault and vise versa.</p>
 
@@ -11,11 +9,14 @@
 <blockquote>"Entropy is a scientific concept, as well as a measurable physical property, that is most commonly associated with a state of disorder, randomness, or uncertainty."</blockquote>
 
 <h3>Command syntax</h3>
-<pre>$ entrovault
-entrovault -> Entropy vault
+<pre>entrovault -> Entropy vault
  by Olivier Van Rompuy
 
-Syntax: entrovault [-a | -r | -e] [-q] [-p vault_password] [-f filename] [-% rounds] keystring
+Search Entry  : entrovault [-c] [-p vault_password] [-v vault_name] [-% rounds] keystring
+Append Entry  : entrovault -a [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
+Replace Entry : entrovault -r [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
+Erase Entry   : entrovault -e [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
+List Vaults   : entrovault -l
 
 Options
  -a             Append entry
@@ -25,6 +26,8 @@ Options
  -q             Password type payload entry
  -v             Vault name
  -%             Encryption rounds
+ -l             List vaults
+ -c             Execute content as system commands
  </pre>
 
 <h3>Explain by example :</h3>
@@ -47,6 +50,9 @@ PASSW0RD
 <p>Example interactive scripting use case :<br/>
 The point here is that you only need to remember the vault password</p>
 <pre>some_application -username=myuser -password=$(entrovault MySecretPassword) ...do some stuff</pre>
+<p>Use case for -c : Store and execute sensitive commands</p>
+<pre>$ echo "some_application -username=myuser -password=XYZABC ..." | entrovault -a mycommand
+$ entrovault -c mycommand</pre>
 
 <p>Replace entry</p>
 <pre>$ entrovault -q -r MySecretPassword
@@ -64,7 +70,7 @@ Payload 2nd :
 
 <p>By default stdin is used as the source for the payload/content unless -q is provided</p>
 <p>You can use mixed complexities of encryption with the -% parameter you can choose a customer nr of encryption rounds.
-Do note that encryption is done in 2 stages, so the current 2 round default actually results in 4 encryption rounds.
+Do note that encryption is done in 2 stages, so the current 4 round default actually results in 8 encryption rounds.
 You can go up to 255, but beware that as the vault file grows it will require exponentially more cpu power to retrieve entries. 2-8 rounds is quite secure, anything above is for experimentation only.
 <p>
 

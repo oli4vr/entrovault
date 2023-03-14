@@ -5,19 +5,11 @@
  * 
  * Entropy Vault command line tool
  * 
- * Entropy vaults are cryptographically obscured files intended to store passwords and
- * other sensitive short strings. Every entry is stored as an encrypted entry that contains payload+hash.
- * To retrieve it theprogram must decript every possible entry per x nr of bytes with the provided keys.
- * 
- * To complicate things a random amount of random data blocks are added before and after each entry and
- * unused data in a payload is also randomized to avoid predictable data blocks.
- * 
- * The vault files are stored in ${HOME}/.entropy
- * 
  * */
 
-#define PAYLOAD_SIZE 1024
-#define BUFFER_SIZE 1088
+#define PAYLOAD_SIZE 8128
+#define MESSAGE_SIZE 8126
+#define BUFFER_SIZE 8192
 
 #define RNDBUFF 65536
 
