@@ -70,7 +70,7 @@ Payload 2nd :
 
 <p>By default stdin is used as the source for the payload/content unless -q is provided</p>
 <p>You can use mixed complexities of encryption with the -% parameter you can choose a customer nr of encryption rounds.
-Do note that encryption is done in 2 stages, so the current 4 round default actually results in 8 encryption rounds.
+Do note that encryption is done in 2 stages, so the current 3 round default actually results in 6 encryption rounds.
 You can go up to 255, but beware that as the vault file grows it will require exponentially more cpu power to retrieve entries. 2-8 rounds is quite secure, anything above is for experimentation only.
 <p>
 
