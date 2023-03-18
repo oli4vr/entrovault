@@ -101,5 +101,5 @@ open /dev/tty
 interact
 EOF</pre>
 <p>Store it in a vault and execute it :</p>
-<pre>$ entrovault -a ssh/autologin &lt; autologin.sh
-$ entrovault -c ssh/autologin</pre>
+<pre>$ entrovault -v sshvault -a ssh/autologin &lt; autologin.sh
+$ entrovault -v sshvault -c ssh/autologin</pre>
