@@ -7,8 +7,8 @@
 
 <p><u><b>"Entropy" on wikipedia :</b></u></p>
 <blockquote>"Entropy is a scientific concept, as well as a measurable physical property, that is most commonly associated with a state of disorder, randomness, or uncertainty."</blockquote>
-
-<h3>Command syntax</h3>
+<br />
+<h3><b>Command syntax :</b></h3>
 <pre>entrovault -> Entropy vault
  by Olivier Van Rompuy
 
@@ -30,7 +30,7 @@ Options
  -c             Execute content as system commands
  </pre>
 
-<h3>Explain by example :</h3>
+<h3><b>Explain by example :</b></h3>
 <p><b>Store a password in the vault and retrieve it</b><br/>
 You are always required to enter a vault password. This password can be unique per entry, but does not have to be.
 This is purely up to the user and the use case. When you append a new entry you are required to confirm the password a second time.
@@ -47,12 +47,6 @@ Payload 2nd :
 Enter vault password for MySecretPassword :
 PASSW0RD
 </pre>
-<p>Example interactive scripting use case :<br/>
-The point here is that you only need to remember the vault password</p>
-<pre>some_application -username=myuser -password=$(entrovault MySecretPassword) ...do some stuff</pre>
-<p>Use case for -c : Store and execute sensitive commands</p>
-<pre>$ echo "some_application -username=myuser -password=XYZABC ..." | entrovault -a mycommand
-$ entrovault -c mycommand</pre>
 
 <p>Replace entry</p>
 <pre>$ entrovault -q -r MySecretPassword
@@ -74,11 +68,38 @@ Do note that encryption is done in 2 stages, so the current 3 round default actu
 You can go up to 255, but beware that as the vault file grows it will require exponentially more cpu power to retrieve entries. 2-8 rounds is quite secure, anything above is for experimentation only.
 <p>
 
-<h3>Build & Install</h3>
+<h3><b>Build & Install</b></h3>
 <pre>$ git clone https://github.com/oli4vr/entrovault.git
 $ cd entrovault
 $ make
 $ make install
 </pre>
 <p>* Make sure ~/bin is in your $PATH</p>
-
+<br />
+<h3><b>More example use cases :</b></h3>
+<p><b>Interactive authentication script :</b></p>
+<pre>some_application -username=myuser -password=$(entrovault MySecretPassword) ...do some stuff</pre>
+<p>* The point here is that you only need to remember the vault password</p><br />
+<p><b>Use case for -c : Store and execute sensitive commands</b></p>
+<pre>$ echo "some_application -username=myuser -password=XYZABC ..." | entrovault -a mycommand
+$ entrovault -c mycommand</pre><br />
+<p><b>Safely store (expect) login scripts with hard coded passwords</b><br />
+Example Login script with nested jump to a third host :</p>
+<pre># vi autologin.sh
+#!/bin/bash
+/usr/bin/expect &lt;&lt;EOF
+set timeout 2
+spawn ssh -t -C username@hostname
+expect "password : "
+send "PASSW0RD1\r"
+expect "$ "
+send "ssh -t -C username2@hostname2\r"
+expect "password : "
+send "PASSW0RD2\r"
+close stdin
+open /dev/tty
+interact
+EOF</pre>
+<p>Store it in a vault and execute it :</p>
+<pre>$ entrovault -a ssh/autologin &lt; autologin.sh
+$ entrovault -c ssh/autologin</pre>
