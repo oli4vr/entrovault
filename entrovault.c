@@ -123,13 +123,13 @@ int main(int argc, char **argv)
 // Bad or empty options -> Display help
  if (badsyntax)
  {
-    fprintf(stderr,"entrovault -> Entropy vault\n by Olivier Van Rompuy\n\n");
-    fprintf(stderr,"Search Entry  : entrovault [-c] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
-    fprintf(stderr,"Append Entry  : entrovault -a [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
-    fprintf(stderr,"Replace Entry : entrovault -r [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
-    fprintf(stderr,"Erase Entry   : entrovault -e [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n");
-    fprintf(stderr,"List Vaults   : entrovault -l\n\n");
-    fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry\n -e\t\tErase entry\n -p\t\tVault password\n");
+    fprintf(stderr,"%s -> Entropy vault\n by Olivier Van Rompuy\n\n",cmd);
+    fprintf(stderr,"Search Entry  : %s [-c] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
+    fprintf(stderr,"Append Entry  : %s -a [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
+    fprintf(stderr,"Replace Entry : %s -r [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
+    fprintf(stderr,"Erase Entry   : %s -e [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
+    fprintf(stderr,"List Vaults   : %s -l\n\n",cmd);
+    fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry. If not found append\n -e\t\tErase entry\n -p\t\tVault password\n");
     fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n -l\t\tList vaults\n");
     fprintf(stderr," -c\t\tExecute content as system commands\n\n");
     return -1;
@@ -184,9 +184,9 @@ int main(int argc, char **argv)
      break;
     case 2:   //Replace entry
        offset=entropy_search(buffer,keystring,password,filepath,rounds);
-       if (offset>-1) {
-        strncpy(payload,buffer,PAYLOAD_SIZE);
-        payload[PAYLOAD_SIZE]=0;
+       
+       strncpy(payload,buffer,PAYLOAD_SIZE);
+       payload[PAYLOAD_SIZE]=0;
 
        if (imode==1) {
         strncpy(payload,(unsigned char*)getpass("Payload 1st : "),80);
@@ -198,11 +198,15 @@ int main(int argc, char **argv)
        } else {
         rr=fread(payload,1,PAYLOAD_SIZE,stdin);
        }
+
        wipe_buffer(buffer);
        strncpy(buffer,payload,PAYLOAD_SIZE);
-       entropy_replace(buffer,keystring,password,filepath,rounds,offset);
+
+       if (offset>-1) {
+        entropy_replace(buffer,keystring,password,filepath,rounds,offset);
        } else {
-        fprintf(stderr," Error : Keystring entry not found!");
+        entropy_append(buffer,keystring,password,filepath,rounds);
+        //fprintf(stderr," Error : Keystring entry not found!");
         return -5;
        }
      break;

@@ -61,7 +61,7 @@ void wipe_buffer(unsigned char *buff)
  }
 }
 
-//Search and entry
+//Search entry and return offset
 long int entropy_search(unsigned char * buff, unsigned char *keystr, unsigned char *pwd, unsigned char *fname, unsigned char rounds)
 {
  unsigned char buff1[BUFFER_SIZE];
@@ -76,12 +76,11 @@ long int entropy_search(unsigned char * buff, unsigned char *keystr, unsigned ch
 
  if (fname==NULL) {
   fprintf(stderr," Error: Input file not found\n");
-  return -1;
+  return -3;
  }
 
  fp=fopen(fname,"r+b");
  if (fp == NULL) {
-  fprintf(stderr," Error: Failed to open file for read\n");
   return -2;
  }
 
@@ -123,7 +122,7 @@ long int entropy_append(unsigned char * buff, unsigned char *keystr, unsigned ch
 
  if (fname==NULL) {
   fprintf(stderr," Error: Output file not found\n");
-  return -1;
+  return -3;
  }
 
  fp=fopen(fname,"a+b");
@@ -162,7 +161,7 @@ long int entropy_replace(unsigned char * buff, unsigned char *keystr, unsigned c
 
  if (fname==NULL) {
   fprintf(stderr," Error: Output file not found\n");
-  return -1;
+  return -4;
  }
 
  fp=fopen(fname,"rw+b");
@@ -204,7 +203,7 @@ long int entropy_erase(unsigned char * buff, unsigned char *keystr, unsigned cha
 
  if (fname==NULL) {
   fprintf(stderr," Error: Output file not found\n");
-  return -1;
+  return -4;
  }
 
  fp=fopen(fname,"rw+b");

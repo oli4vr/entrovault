@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "sha512.h"
 
 #define BUFFER_SIZE 65536
 
@@ -24,11 +25,23 @@ unsigned char ttable[256][256]={0};
 unsigned char dtable[256][256]={0};
 int rounds=4;
 
+void sha_key(unsigned char * src,unsigned char * tgt) {
+ unsigned char n=0;
+ for (;n<16;n++) {
+   SHA512(src,64,tgt);
+   src+=64;
+   tgt+=64;
+ }
+}
+
+//We explode the keystring into a 1024byte key
+//Then we obscure it with sha512
 int buildkey(unsigned char * keystring) {
- int se=strlen(keystring),n=0;
+ int se=strnlen(keystring,1024),n=0;
  int sp1=0;
  int cval;
- unsigned char * kp=key;
+ unsigned char explode[1024];
+ unsigned char * kp=explode;
  unsigned char last,cur1;
 
  if (keystring==NULL) return -1;
@@ -44,7 +57,7 @@ int buildkey(unsigned char * keystring) {
   sp1=(sp1+1)%se;
   kp++;
  }
-
+ sha_key(explode,key);
  return 0;
 }
 
@@ -63,6 +76,7 @@ unsigned char tt_findchar(unsigned char input, int *table) {
  return curr;
 }
 
+//Build the translation tables for byte substitution
 void buildtrans() {
  int n,m,kp=0;
  int ctable[256];
@@ -82,6 +96,7 @@ void buildtrans() {
  }
 }
 
+//Inverted XOR
 int invertxor(unsigned char * string, int se) {
  int sp=0,kp=0;
  unsigned char * spp=string;
@@ -103,6 +118,7 @@ int invertxor(unsigned char * string, int se) {
  return 0;
 }
 
+//Byte substitution forward
 void translate_fw(unsigned char * str,int len,unsigned char phase) {
  int n=0;
  unsigned char * tt=ttable[phase];
@@ -113,6 +129,7 @@ void translate_fw(unsigned char * str,int len,unsigned char phase) {
  }
 }
 
+//Byte substitution backward
 void translate_bw(unsigned char * str,int len,unsigned char phase) {
  int n=0;
  unsigned char * dt=dtable[phase];
@@ -123,6 +140,7 @@ void translate_bw(unsigned char * str,int len,unsigned char phase) {
  }
 }
 
+//Bit rotation forward
 void obscure_fw(unsigned char * str,int len,unsigned char phase) {
  int sc,n,max=len-8;
  uint64_t * bp;
@@ -139,6 +157,7 @@ void obscure_fw(unsigned char * str,int len,unsigned char phase) {
  *bp=((*bp)<<(tt[1]&63))|((*bp)>>(64-(tt[1]&63)));
 }
 
+//Bit rotation backward
 void obscure_bw(unsigned char * str,int len,unsigned char phase) {
  int sc,n,max=len-8;
  uint64_t * bp;
@@ -155,12 +174,14 @@ void obscure_bw(unsigned char * str,int len,unsigned char phase) {
  }
 }
 
+//Set up encryption
 int init_encrypt(unsigned char * keystr,int nr_rounds) {
  rounds=nr_rounds;
  buildkey(keystr);
  buildtrans();
 }
 
+//Encrypt a buffer of n bytes
 int encrypt_data(unsigned char * buffer,int len) {
  int n=0;
  invertxor(buffer,len);
@@ -172,6 +193,7 @@ int encrypt_data(unsigned char * buffer,int len) {
  }
 }
 
+//Decrypt a buffer of n bytes
 int decrypt_data(unsigned char * buffer,int len) {
  int n=rounds-1;
  for(;n>=0;n--) {
