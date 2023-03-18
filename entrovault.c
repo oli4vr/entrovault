@@ -202,11 +202,11 @@ int main(int argc, char **argv)
        wipe_buffer(buffer);
        strncpy(buffer,payload,PAYLOAD_SIZE);
 
+       //Replace the entry of found, otherwise append.
        if (offset>-1) {
         entropy_replace(buffer,keystring,password,filepath,rounds,offset);
        } else {
         entropy_append(buffer,keystring,password,filepath,rounds);
-        //fprintf(stderr," Error : Keystring entry not found!");
         return -5;
        }
      break;
