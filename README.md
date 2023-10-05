@@ -44,7 +44,7 @@ Payload 1st :
 Payload 2nd :
 </pre>
 <p>Retrieve your password</p>
-<pre>$ entrovault MySecretPassword
+<pre>$ entrovault -s MySecretPassword
 Enter vault password for MySecretPassword :
 PASSW0RD
 </pre>
