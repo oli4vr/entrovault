@@ -12,22 +12,23 @@
 <pre>entrovault -> Entropy vault
  by Olivier Van Rompuy
 
-Search Entry  : entrovault [-c] [-p vault_password] [-v vault_name] [-% rounds] keystring
+Search Entry  : entrovault [-s] [-c] [-p vault_password] [-v vault_name] [-% rounds] keystring
 Append Entry  : entrovault -a [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
 Replace Entry : entrovault -r [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
 Erase Entry   : entrovault -e [-q] [-p vault_password] [-v vault_name] [-% rounds] keystring
 List Vaults   : entrovault -l
 
 Options
- -a             Append entry
- -r             Replace entry
- -e             Erase entry
- -p             Vault password
- -q             Password type payload entry
- -v             Vault name
- -%             Encryption rounds
- -l             List vaults
- -c             Execute content as system commands
+ -s 	Output string in plain text instead of invisible.
+ -a		Append entry
+ -r		Replace entry. If not found append
+ -e		Erase entry
+ -p		Vault password
+ -q		Password type payload entry
+ -v		Vault name
+ -%		Encryption rounds
+ -l		List vaults
+ -c		Execute content as system commands
  </pre>
 
 <h3><b>Explain by example :</b></h3>
