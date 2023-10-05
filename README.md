@@ -19,8 +19,8 @@ Erase Entry   : entrovault -e [-q] [-p vault_password] [-v vault_name] [-% round
 List Vaults   : entrovault -l
 
 Options
- -s 	    Output string in plain text instead of invisible.
- -a		Append entry
+ -s     Output string in plain text instead of invisible.
+ -a     Append entry
  -r		Replace entry. If not found append
  -e		Erase entry
  -p		Vault password
