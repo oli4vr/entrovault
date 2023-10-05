@@ -37,9 +37,10 @@
 int main(int argc, char **argv)
 {
  unsigned char badsyntax=0;
- unsigned char mode=0;
- unsigned char imode=0;
- unsigned char syscmd=0;
+ unsigned char mode=0;   //0=query,1=append,2=replace,3=erase
+ unsigned char imode=0;  //input mode 0=stdin, 1=password prompt
+ unsigned char syscmd=0; //0=display string,1=execute as script
+ unsigned char distype=0; //0=printed as hidden string,1=print full string
  unsigned char *opt, * cmd=*argv, *c;
  unsigned char basepath[256]={0};
  unsigned char filepath[512]={0};
@@ -66,6 +67,9 @@ int main(int argc, char **argv)
   if (*opt!='-') {badsyntax=1; argc=0;}
   else {
    switch(opt[1]) {
+    case 's':
+           distype=1;
+           break;;
     case 'c':
            syscmd=1;
            break;
@@ -124,12 +128,13 @@ int main(int argc, char **argv)
  if (badsyntax)
  {
     fprintf(stderr,"%s -> Entropy vault\n by Olivier Van Rompuy\n\n",cmd);
-    fprintf(stderr,"Search Entry  : %s [-c] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
+    fprintf(stderr,"Search Entry  : %s [-s] [-c] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
     fprintf(stderr,"Append Entry  : %s -a [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
     fprintf(stderr,"Replace Entry : %s -r [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
     fprintf(stderr,"Erase Entry   : %s -e [-q] [-p vault_password] [-v vault_name] [-%% rounds] keystring\n",cmd);
     fprintf(stderr,"List Vaults   : %s -l\n\n",cmd);
-    fprintf(stderr,"Options\n -a\t\tAppend entry\n -r\t\tReplace entry. If not found append\n -e\t\tErase entry\n -p\t\tVault password\n");
+    fprintf(stderr,"Options\n -s \t\tOutput string in plain text instead of invisible.\n");
+    fprintf(stderr," -a\t\tAppend entry\n -r\t\tReplace entry. If not found append\n -e\t\tErase entry\n -p\t\tVault password\n");
     fprintf(stderr," -q\t\tPassword type payload entry\n -v\t\tVault name\n -%%\t\tEncryption rounds\n -l\t\tList vaults\n");
     fprintf(stderr," -c\t\tExecute content as system commands\n\n");
     return -1;
@@ -163,7 +168,9 @@ int main(int argc, char **argv)
       if (syscmd) {
        rc=system(payload);
       } else {
+       if (distype==0) fprintf(stdout,"Copy/Paste between >>>%c[8m",27);
        fwrite(payload,1,strnlen(payload,PAYLOAD_SIZE),stdout);
+       if (distype==0) fprintf(stdout,"%c[m<<<",27);
       }
       }
      break;
@@ -197,6 +204,7 @@ int main(int argc, char **argv)
        }
        } else {
         rr=fread(payload,1,PAYLOAD_SIZE,stdin);
+	payload[rr]=0;
        }
 
        wipe_buffer(buffer);
